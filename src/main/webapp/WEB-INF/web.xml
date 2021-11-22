@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://Java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<!-- web.xml : WAS 실행시 프로젝트의 자원을 컨텍스트로 생성하기 위한 정보를 제공하는 파일 -->
+	<!-- => 리스너 설정, 필터 설정, 서블릿 설정, 에러 페이지 설정 등 -->
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<!-- context-param : 컨텍스트에 존재하는 모든 클래스에 값을 제공하기 위한 엘리먼트 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<!-- listener : WAS 실행시 Listener 클래스를 객체로 생성하기 위한 엘리먼트 -->
+	<!-- Listener 클래스 : ServletContextListener 인터페이스를 상속받은 클래스 -->
+	<!-- => 컨텍스트의 모든 클래스에서 사용할 수 있는 객체를 제공하기 위한 클래스 -->
+	<!-- => contextInitalized() 메소드 : Listener 객체 생성 후 자동으로 호출되는 메소드 - 초기화 작업 -->
+	<!-- => contextDestroyed() 메소드 : Listener 객체 소멸 전 자동으로 호출되는 메소드 - 마무리 작업 -->
+	<listener>
+		<!-- listener-class : Listener 클래스를 설정하기 위한 엘리먼트 -->
+		<!-- ContextLoaderListener : WebApplicationContext 객체(Spring Container)를 생성하고
+		Bean Configuration File에 Spring Bean으로 등록된 모든 클래스를 객체로 생성하여 
+		컨텍스트에 작성된 모든 클래스에서 사용할 수 있도록 제공하는 Listener 클래스 -->
+		<!-- => context-param 엘리먼트로 제공되는 값이 Bean Configuration File로 처리 -->
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- filter : 필터 클래스를 필터로 등록하는 엘리먼트 -->
+	<!-- Filter 클래스 : 웹프로그램 실행 전후에 동작될 명령을 제공하는 클래스 -->
+	<!-- CharacterEncodingFilter : Spring Framework에서 제공하는 필터 클래스 중 하나로 요청 
+	처리 전 리퀘스트 메세지의 캐릭터셋를 변경하는 클래스 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	
+	<!-- filter-mapping : 필터가 적용되기 위해 URL 주소의 패턴을 설정하는 엘리먼트 -->
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Processes application requests -->
+	<!-- servlet : 서블릿 클래스를 서블릿(웹프로그램)으로 등록하는 엘리먼트 -->
+	<!-- => DispatcherServlet 클래스(Front Controller)를 웹프로그램으로 등록되도록 설정 -->
+	<!-- => servlet 엘리먼트를 이용하여 Front Controller 역활의 웹프로그램을 여러개 등록 가능 -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<!-- DispatcherServlet : 클라이언트의 모든 요청을 처리하기 위해 Spring Framework에서
+		제공하는 Front Controller 클래스 -->
+		<!-- => init-param 엘리먼트로 제공되는 값이 Bean Configuration File로 처리  -->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- init-param : 서블릿 클래스에 필요한 값을 제공하기 위한 엘리먼트 -->
+		<!-- => Bean Configuration File에 Spring Bean으로 등록된 모든 클래스를 객체로 생성하여
+		서블릿(DispatcherServlet)에서만 제공되어 사용  -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<!-- param-value 엘리먼트의 Bean Configuration File을 여러개 등록 가능 -->
+			<!-- => Bean Configuration File을 엔터 또는 , 또는 ;으로 구분하여 설정 -->
+			<!-- => Annotation 기반의 Bean Configuration File은 하나만 등록 가능 -->
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<!-- load-on-startup : WAS 실행시 서블릿 클래스를 객체로 생성하기 위한 엘리먼트 -->
+		<!-- => 클라이언트의 요청 없이 WAS 실행시 미리 서블릿 클래스를 객체로 생성하기 위해 사용 -->
+		<!-- => 엘리먼트의 값은 0보다 큰 정수값을 사용하며 값이 작을수록 먼저 객체로 생성 -->
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+		
+	<!-- servlet-mapping : 서블릿(웹프로그램)을 실행하기 위한 URL 패턴을 설정하는 엘리먼트  -->	
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<!-- 클라이언트의 모든 요청(/)에 대해 서블릿이 실행되도록 설정 -->
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+	<!--  
+	<servlet>
+		<servlet-name>mvcServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				/WEB-INF/spring/mvcServlet/mvc-context1.xml
+				/WEB-INF/spring/mvcServlet/mvc-context2.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>mvcServlet</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	-->
+</web-app>
+
+
+
+
+
+
+

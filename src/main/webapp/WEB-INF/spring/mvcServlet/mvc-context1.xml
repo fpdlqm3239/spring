@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- Command Controller 클래스를 Spring Bean으로 등록 -->
+	<beans:bean class="xyz.itwill09.mvc.ListController" id="listController"/>
+	<beans:bean class="xyz.itwill09.mvc.ViewController" id="viewController"/>
+	
+	<!-- Spring Framework에서 제공하는 SimpleUrlHandlerMapping 클래스를 Spring Bean으로 등록 -->
+	<!-- SimpleUrlHandlerMapping : Front Controller(DispatcherServlet)에게 클라이언트 요청을
+	처리하기 위해 Command Controller 클래스의 Spring Bean 객체에 beanName를 제공하기 위한 클래스 -->
+	<!-- => mappings 필드에 Map 객체를 생성하여 인젝션 처리 -->
+	<!-- => 클라이언트의 요청정보(Key)와 Command Controller 클래스의 Spring Bean(Value)를
+	Map 객체의 엔트리로 추가 -->
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<beans:property name="mappings">
+			<beans:props>
+				<beans:prop key="/list.do">listController</beans:prop>
+				<beans:prop key="/view.do">viewController</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+</beans:beans>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.9.18.202108161154-CI-B2817]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[true]]></enableImports>
+	<configs>
+		<config>src/main/resources/03_message.xml</config>
+		<config>src/main/resources/04-1_beanCreate.xml</config>
+		<config>src/main/resources/04-2_beanAttribute.xml</config>
+		<config>src/main/resources/04-3_beanAnnotation.xml</config>
+		<config>src/main/resources/05-1_di.xml</config>
+		<config>src/main/resources/05-2_collection.xml</config>
+		<config>src/main/resources/05-3_autowire.xml</config>
+		<config>src/main/resources/05-4_diAnnotation.xml</config>
+		<config>src/main/resources/07-1_aop.xml</config>
+		<config>src/main/resources/07-2_param.xml</config>
+		<config>src/main/resources/07-3_timer.xml</config>
+		<config>src/main/resources/07-4_email.xml</config>
+		<config>src/main/resources/07-5_aopAnnotatop.xml</config>
+		<config>src/main/resources/08_dao.xml</config>
+	</configs>
+	<autoconfigs>
+		<config>src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml</config>
+		<config>src/main/webapp/WEB-INF/spring/root-context.xml</config>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

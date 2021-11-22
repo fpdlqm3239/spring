@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+		
+	<!-- Spring Framework에서 제공하는 InternalResourceViewResolver 클래스를 Spring Bean으로 등록 -->
+	<!-- InternalResourceViewResolver : 뷰이름(ViewName)을 전달받아 뷰페이지(JSP)로 변환하여
+	제공하는 클래스 -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- prefix 필드에는 뷰이름 앞부분에 추가될 값을 인젝션 처리 - 뷰페이지 폴더 -->
+		<beans:property name="prefix" value="/WEB-INF/mvc/"/>
+		<!-- suffix 필드에는 뷰이름 뒷부분에 추가될 값을 인젝션 처리 - 뷰페이지 확장자 -->
+		<beans:property name="suffix" value=".jsp"/>
+	</beans:bean>
+	
+</beans:beans>

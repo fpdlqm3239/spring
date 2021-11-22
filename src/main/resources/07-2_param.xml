@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 핵심관심모듈이 선언된 클래스를 Spring Bean으로 등록 -->
+	<bean class="xyz.itwill07.aop.JoinPointBean" id="joinPointBean"/>
+	
+	<!-- 횡단관심모듈이 선언된 클래스를 Spring Bean으로 등록 -->
+	<bean class="xyz.itwill07.aop.JoinPointAdvice" id="joinPointAdvice"/>
+	
+	<aop:config>
+		<aop:aspect ref="joinPointAdvice">
+			<aop:before method="displayTarget" pointcut="execution(* *(..))"/>
+			
+			<!-- returning 속성 : 타겟메소드의 반환값을 저장하기 위한 횡단관심모듈의 매개변수명을 속성값으로 설정 -->
+			<aop:after-returning method="displayName" pointcut="execution(* getName())" returning="object"/>
+			
+			<!-- throwing 속성 : 타겟메소드의 예외(Exception 객체)을 저장하기 위한 횡단관심모듈의 매개변수명을 속성값으로 설정 -->
+			<aop:after-throwing method="displayException" pointcut="execution(* calc(int,int))" throwing="exception"/>
+			
+			<aop:around method="display" pointcut="execution(* modify(..))"/>
+		</aop:aspect>
+	</aop:config>
+</beans>
+
+
+
+

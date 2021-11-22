@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Apache 그룹에서 제공하는 commons-dbcp2 라이브러리의 BasicDataSource 클래스를 Spring Bean으로 등록 -->
+	<!-- => Connection 객체 생성 관련 정보를 필드에 전달하여 저장 - Injection -->
+	<bean class="org.apache.commons.dbcp2.BasicDataSource" id="apacheDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="scott"/>
+		<property name="password" value="tiger"/>
+	</bean>
+	
+	<!-- Spring Framework에서 제공하는 spring-jdbc 라이브러리의 DriverManagerDataSource 클래스를 Spring Bean으로 등록 -->
+	<!-- => Connection 객체 생성 관련 정보를 필드에 전달하여 저장 - Injection -->
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="springDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>	
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="scott"/>
+		<property name="password" value="tiger"/>
+	</bean>
+	
+	<!-- JdbcTemplate 클래스를 Spring Bean으로 등록 -->
+	<!-- => DataSource 관련 클래스의 Spring Bean를 인젝션 처리 -->
+	<bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
+		<property name="dataSource" ref="springDataSource"/>
+	</bean>
+	
+	<!-- StudentDAOImpl 클래스를 Spring Bean으로 등록 -->
+	<!-- => JdbcTemplate 클래스의 Spring Bean를 인젝션 처리 -->
+	<bean class="xyz.itwill08.dao.StudentDAOImpl" id="studentDAO">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+
+	<!-- StudentDAOImplTwo 클래스를 Spring Bean으로 등록 -->
+	<!-- => JdbcTemplate 클래스의 Spring Bean를 인젝션 처리 -->
+	<bean class="xyz.itwill08.dao.StudentDAOImplTwo" id="studentDAOImplTwo">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	
+	<!-- StudentServiceImpl 클래스를 Spring Bean으로 등록 -->
+	<!-- => StudentDAOImpl 클래스의 Spring Bean를 인젝션 처리 -->
+	<bean class="xyz.itwill08.dao.StudentServiceImpl" id="studentService">
+		<!-- <property name="studentDAO" ref="studentDAO"/> -->
+		<property name="studentDAO" ref="studentDAOImplTwo"/>
+	</bean>
+	
+</beans>

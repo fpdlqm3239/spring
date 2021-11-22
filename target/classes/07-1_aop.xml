@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+	<!-- 핵심관심모듈이 선언된 클래스를 Spring Bean으로 등록 -->
+	<bean class="xyz.itwill07.aop.StudentDAOImpl" id="studentDAO"/>
+	<bean class="xyz.itwill07.aop.StudentServiceImpl" id="studentService">
+		<property name="studentDAO" ref="studentDAO"/>
+	</bean>
+	
+	<!-- 횡단관심모듈이 선언된 클래스(Advice)를 Spring Bean으로 등록 -->
+	<bean class="xyz.itwill07.aop.StudentAdvice" id="studentAdvice"/>
+	
+	<!-- config : Spring AOP 기능(AspectJ)을 구현하기 위한 상위 엘리먼트 -->
+	<aop:config>
+		<!-- aspect : 핵심관심모듈에 횡단관심모듈을 원하는 위치(JoinPoint)에 삽입하여
+		실행되도록 설정하는 엘리먼트 -->
+		<!-- => 핵심관심모듈은 PointCut를 사용하여 타겟메소드로 설정 -->
+		<!-- ref 속성 : 횡단관심모듈이 선언된 Spring Bean의 beanName를 속성값으로 설정 -->
+		<aop:aspect ref="studentAdvice">
+			<!-- before : 핵심관심모듈 앞에 횡단관심모듈을 삽입하기 위한 엘리먼트 - JoinPoint -->
+			<!-- method 속성 : 횡단관심모듈 중 삽입될 메소드명을 속성값으로 설정 -->
+			<!-- pointcut 속성 : execution 또는 within 중 하나를 속성값으로 설정 -->
+			<!-- => 핵심관심모듈 중 원하는 메소드를 타겟메소드로 지정하기 위한 정보를 속성값으로 설정 -->
+			<!-- => execution 속성값 : PointCut 표현식을 이용하여 타겟메소드를 지정 -->
+			<!-- => within 속성값 : 클래스(Spring Bean)의 모든 메소드를 타겟메소드를 지정  -->
+			<!-- => pointcut 속성값으로 연산자 사용 가능 : !(NOT), &&(AND), ||(OR) -->
+			
+			<!-- execution 속성값을 이용하여 타겟메소드를 지정하는 방법 -->
+			<!-- 형식)execution([접근지정자] 반환형 [패키지명.클래스명.]메소드명(자료형,자료형,...)) -->
+			<!-- => 클래스 대신 인터페이스 사용 가능 -->
+			<!-- => 반환형 또는 매개변수의 자료형이 클래스인 경우 패키지를 포함하여 표현 -->
+			<!-- => 메소드 머릿부를 표현하여 타겟메소드를 지정 - PointCut 표현식 사용 가능 -->
+			<!-- PointCut 표현식 : ..(0개 이상), *(1개 이상), +(0개 또는 1개) -->
+			<!-- <aop:before method="beforeLog" pointcut="execution(void addStudent(xyz.itwill07.aop.Student))"/> -->
+			<!-- <aop:before method="beforeLog" pointcut="execution(* *(..))"/> -->
+			<!-- <aop:before method="beforeLog" pointcut="execution(xyz.itwill07.aop.Student *(*))"/> -->
+			<!-- <aop:before method="beforeLog" pointcut="execution(* get*(..))"/> -->
+			<!-- <aop:before method="beforeLog" pointcut="execution(* xyz.itwill07.aop.StudentDAO.*(..))"/> -->
+			<!-- <aop:before method="beforeLog" pointcut="!execution(* xyz.itwill07.aop.StudentDAO.*(..))"/> -->
+			
+			<!-- within 속성값을 이용하여 타겟메소드를 지정하는 방법 -->
+			<!-- 형식)within(패키지명.클래스명) -->
+			<!-- => Spring Bean으로 등록된 클래스의 모든 메소드를 타겟메소드로 지정 -->
+			<!-- => 클래스명은 PointCut 표현식를 이용하여 표현 가능 -->
+			<!-- => 클래스 대신 인터페이스 사용 불가능 -->
+			<!-- <aop:before method="beforeLog" pointcut="within(xyz.itwill07.aop.StudentDAOImpl)"/> -->
+			
+			<!-- pointcut : 핵심관심모듈을 타겟메소드로 지정하기 위한 엘리먼트 -->
+			<!-- => PointCut 설정을 재사용하여 유지보수의 효율성 증가 -->
+			<!-- expression 속성 : execution 또는 within 중 하나를 속성값으로 설정 -->
+			<!-- => 핵심관심모듈 중 원하는 메소드를 타겟메소드로 지정하기 위한 정보를 속성값으로 설정 -->
+			<!-- id 속성 : pointcut 엘리먼트의 식별자를 속성값으로 설정 -->
+			<aop:pointcut expression="execution(* xyz.itwill07.aop.StudentDAO.*(..))" id="studentDAOPointCut"/>
+			
+			<!-- JoinPoint 관련 엘리먼트에서 pointcut-ref 속성으로 pointcut 엘리먼트의 식별자를
+			속성값으로 설정하여 타겟메소드를 지정 -->
+			<aop:before method="beforeLog" pointcut-ref="studentDAOPointCut"/>
+			
+			<!-- after : 핵심관심모듈 뒤에 횡단관심모듈을 삽입하기 위한 엘리먼트 -->
+			<!-- => 핵심관심모듈 실행에 대한 예외와 상관없이 횡단관심모듈이 무조건 삽입되어 실행 -->
+			<aop:after method="afterLog" pointcut-ref="studentDAOPointCut"/>
+
+			<!-- after-returning : 핵심관심모듈 뒤에 횡단관심모듈을 삽입하기 위한 엘리먼트 -->
+			<!-- => 핵심관심모듈이 정상적으로 실행된 후 횡단관심모듈이 삽입되어 실행 -->
+			<aop:after-returning method="afterReturningLog" pointcut-ref="studentDAOPointCut"/>
+			
+			<!-- after-throwing : 핵심관심모듈 뒤에 횡단관심모듈을 삽입하기 위한 엘리먼트 -->
+			<!-- => 핵심관심모듈 실행시 예외가 발생된 후 횡단관심모듈이 삽입되어 실행 -->
+			<aop:after-throwing method="afterThrowingLog" pointcut-ref="studentDAOPointCut"/>
+
+			<!-- around : 핵심관심모듈 앞뒤에 횡단관심모듈을 삽입하기 위한 엘리먼트 -->
+			<aop:around method="aroundLog" pointcut-ref="studentDAOPointCut"/>
+		</aop:aspect>
+	</aop:config>
+</beans>
